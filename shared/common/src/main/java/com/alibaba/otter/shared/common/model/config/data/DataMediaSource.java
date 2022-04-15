@@ -37,6 +37,8 @@ public class DataMediaSource implements Serializable {
     private String            encode;
     private Date              gmtCreate;
     private Date              gmtModified;
+    private ExtensionData     extensionData;
+
 
     public Long getId() {
         return id;
@@ -84,6 +86,14 @@ public class DataMediaSource implements Serializable {
 
     public void setEncode(String encode) {
         this.encode = encode;
+    }
+
+    public ExtensionData getExtensionData() {
+        return extensionData;
+    }
+
+    public void setExtensionData(ExtensionData extensionData) {
+        this.extensionData = extensionData;
     }
 
     @Override

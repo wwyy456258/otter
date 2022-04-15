@@ -274,8 +274,8 @@ public class CanalEmbedSelector implements OtterSelector {
         } else {
             entries = message.getEntries();
         }
-
         List<EventData> eventDatas = messageParser.parse(pipelineId, entries); // 过滤事务头/尾和回环数据
+        logger.warn("pipelineId:{}采集:{}", entries.size());
         Message<EventData> result = new Message<EventData>(message.getId(), eventDatas);
         // 更新一下最后的entry时间，包括被过滤的数据
         if (!CollectionUtils.isEmpty(entries)) {

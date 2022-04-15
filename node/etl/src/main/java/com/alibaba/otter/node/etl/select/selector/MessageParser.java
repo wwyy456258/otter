@@ -24,6 +24,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.otter.node.etl.extend.processor.IsKeyProcessor;
+import com.alibaba.otter.shared.common.model.config.data.*;
+import com.alibaba.otter.shared.common.utils.extension.ExtensionFactory;
+import com.alibaba.otter.shared.etl.extend.processor.EventProcessor;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ddlutils.model.Table;
 import org.slf4j.Logger;
@@ -44,10 +48,7 @@ import com.alibaba.otter.node.etl.select.exceptions.SelectException;
 import com.alibaba.otter.node.etl.transform.exception.TransformException;
 import com.alibaba.otter.shared.common.model.config.ConfigHelper;
 import com.alibaba.otter.shared.common.model.config.channel.ChannelParameter.SyncConsistency;
-import com.alibaba.otter.shared.common.model.config.data.DataMedia;
 import com.alibaba.otter.shared.common.model.config.data.DataMedia.ModeValue;
-import com.alibaba.otter.shared.common.model.config.data.DataMediaPair;
-import com.alibaba.otter.shared.common.model.config.data.DataMediaSource;
 import com.alibaba.otter.shared.common.model.config.data.db.DbMediaSource;
 import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
 import com.alibaba.otter.shared.common.model.config.pipeline.PipelineParameter;
@@ -71,6 +72,7 @@ public class MessageParser {
     private static final String compatibleMarkTable            = "retl_client";
     private static final String compatibleMarkInfoColumn       = "client_info";
     private static final String compatibleMarkIdentifierColumn = "client_identifier";
+    private ExtensionFactory extensionFactory;
 
     /**
      * 将对应canal送出来的Entry对象解析为otter使用的内部对象
@@ -497,7 +499,7 @@ public class MessageParser {
 
         if (eventType.isInsert()) {
             for (Column column : afterColumns) {
-                if (isKey(tableHolder, tableName, column)) {
+                if (isKey(tableHolder, tableName, column, pipeline, rowData)) {
                     keyColumns.put(column.getName(), copyEventColumn(column, true, tableHolder));
                 } else {
                     // mysql 有效
@@ -506,7 +508,7 @@ public class MessageParser {
             }
         } else if (eventType.isDelete()) {
             for (Column column : beforeColumns) {
-                if (isKey(tableHolder, tableName, column)) {
+                if (isKey(tableHolder, tableName, column, pipeline, rowData)) {
                     keyColumns.put(column.getName(), copyEventColumn(column, true, tableHolder));
                 } else {
                     // mysql 有效
@@ -516,7 +518,7 @@ public class MessageParser {
         } else if (eventType.isUpdate()) {
             // 获取变更前的主键.
             for (Column column : beforeColumns) {
-                if (isKey(tableHolder, tableName, column)) {
+                if (isKey(tableHolder, tableName, column, pipeline, rowData)) {
                     oldKeyColumns.put(column.getName(), copyEventColumn(column, true, tableHolder));
                     // 同时记录一下new
                     // key,因为mysql5.6之后出现了minimal模式,after里会没有主键信息,需要在before记录中找
@@ -529,7 +531,7 @@ public class MessageParser {
                 }
             }
             for (Column column : afterColumns) {
-                if (isKey(tableHolder, tableName, column)) {
+                if (isKey(tableHolder, tableName, column, pipeline, rowData)) {
                     // 获取变更后的主键
                     keyColumns.put(column.getName(), copyEventColumn(column, true, tableHolder));
                 } else if (needAllColumns || entry.getHeader().getSourceType() == CanalEntry.Type.ORACLE
@@ -686,30 +688,25 @@ public class MessageParser {
         return eventColumn;
     }
 
-    private boolean isKey(TableInfoHolder tableHolder, String tableName, Column column) {
-        boolean isEKey = column.getIsKey();
-        if (tableHolder == null || tableHolder.getTable() == null || !tableHolder.isUseTableTransform()) {
-            return isEKey;
-        }
-
-        org.apache.ddlutils.model.Column dbColumn = tableHolder.getTable().findColumn(column.getName(), false);
-        if (dbColumn == null) {
-            // 可能存在ddl，重新reload一下table
-            tableHolder.reload();
-            dbColumn = tableHolder.getTable().findColumn(column.getName(), false);
-            if (dbColumn == null) {
-                throw new SelectException(String.format("not found column[%s] in table[%s]",
-                    column.getName(),
-                    tableHolder.getTable().toVerboseString()));
+    private boolean isKey(TableInfoHolder tableHolder, String tableName, Column column, Pipeline pipeline, RowData rowData) {
+        ExtensionData extensionData = null;
+        for (DataMediaPair pair : pipeline.getPairs()) {
+            DataMedia dataMedia = pair.getSource();
+            if(tableName.equals(dataMedia.getNamespace()+"."+dataMedia.getName())){
+                extensionData = dataMedia.getSource().getExtensionData();
+                break;
             }
         }
-
-        boolean isMKey = dbColumn.isPrimaryKey();
-        if (isMKey != isEKey) {
-            logger.info("table [{}] column [{}] is not match , isMeky: {}, isEkey {}",
-                new Object[] { tableName, column.getName(), isMKey, isEKey });
+        if(extensionData == null){
+            extensionData = new ExtensionData();
+            extensionData.setExtensionDataType(ExtensionDataType.CLAZZ);
+            extensionData.setClazzPath("com.alibaba.otter.node.etl.extend.processor.DefaultIsKeyProcessor");
         }
-        return isMKey;
+        IsKeyProcessor isKeyProcessor = extensionFactory.getExtension(IsKeyProcessor.class, extensionData);
+        if(isKeyProcessor == null){
+            throw new SelectException("未能获取到主键判断执行器");
+        }
+        return isKeyProcessor.isKey(tableHolder, tableName, column, pipeline, rowData);
     }
 
     private String buildName(String name, ModeValue sourceModeValue, ModeValue targetModeValue) {
@@ -743,7 +740,7 @@ public class MessageParser {
      * @author jianghang 2012-5-16 下午04:34:18
      * @version 4.0.2
      */
-    static class TableInfoHolder {
+    public static class TableInfoHolder {
 
         private DbDialect dbDialect;
         private Table     table;
@@ -794,5 +791,9 @@ public class MessageParser {
             }
         }
 
+    }
+
+    public void setExtensionFactory(ExtensionFactory extensionFactory) {
+        this.extensionFactory = extensionFactory;
     }
 }
