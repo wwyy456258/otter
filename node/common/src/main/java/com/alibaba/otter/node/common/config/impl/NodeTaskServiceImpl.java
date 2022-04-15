@@ -413,7 +413,7 @@ public class NodeTaskServiceImpl implements NodeTaskService, InitializingBean {
     // ===================== 事件处理 =====================
 
     /**
-     * 接受manager的channel变更事件
+     * 接受manager的channel变更事件,事件入口
      */
     protected synchronized boolean onNotifyChannel(NotifyChannelEvent event) {
         configClientService.createOrUpdateChannel(event.getChannel()); // 更新本地的config数据

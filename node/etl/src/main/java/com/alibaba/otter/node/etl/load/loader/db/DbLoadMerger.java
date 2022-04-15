@@ -51,7 +51,7 @@ import com.alibaba.otter.shared.etl.model.EventType;
  */
 public class DbLoadMerger {
 
-    private static final Logger logger = LoggerFactory.getLogger(PermitMonitor.class);
+    private static final Logger logger = LoggerFactory.getLogger(DbLoadMerger.class);
 
     /**
      * 将一批数据进行根据table+主键信息进行合并，保证一个表的一个pk记录只有一条结果
