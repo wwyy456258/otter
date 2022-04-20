@@ -32,6 +32,8 @@ import com.alibaba.otter.manager.biz.config.datamediasource.DataMediaSourceServi
 import com.alibaba.otter.manager.web.common.WebConstant;
 import com.alibaba.otter.shared.common.model.config.data.DataMedia;
 import com.alibaba.otter.shared.common.model.config.data.DataMediaSource;
+import com.alibaba.otter.shared.common.model.config.data.ExtensionData;
+import com.alibaba.otter.shared.common.model.config.data.ExtensionDataType;
 import com.alibaba.otter.shared.common.model.config.data.db.DbMediaSource;
 import com.alibaba.otter.shared.common.model.config.data.mq.MqMediaSource;
 
@@ -65,6 +67,17 @@ public class DataMediaAction extends AbstractAction {
         } else if (dataMediaSource.getType().isNapoli() || dataMediaSource.getType().isMq()) {
             dataMedia.setSource((MqMediaSource) dataMediaSource);
         }
+
+        // filter解析
+        ExtensionDataType isKeyType = ExtensionDataType.valueOf(dataMediaInfo.getField("isKeyType").getStringValue());
+        ExtensionData isKeyData = new ExtensionData();
+        isKeyData.setExtensionDataType(isKeyType);
+        if (isKeyType.isClazz()) {
+            isKeyData.setClazzPath(dataMediaInfo.getField("isKeyText").getStringValue());
+        } else if (isKeyType.isSource()) {
+            isKeyData.setSourceText(dataMediaInfo.getField("isKeyText").getStringValue());
+        }
+        dataMedia.setIsKeyData(isKeyData);
 
         try {
             dataMediaService.create(dataMedia);
@@ -100,6 +113,17 @@ public class DataMediaAction extends AbstractAction {
         } else if (dataMediaSource.getType().isNapoli() || dataMediaSource.getType().isMq()) {
             dataMedia.setSource((MqMediaSource) dataMediaSource);
         }
+
+        // filter解析
+        ExtensionDataType isKeyType = ExtensionDataType.valueOf(dataMediaInfo.getField("isKeyType").getStringValue());
+        ExtensionData isKeyData = new ExtensionData();
+        isKeyData.setExtensionDataType(isKeyType);
+        if (isKeyType.isClazz()) {
+            isKeyData.setClazzPath(dataMediaInfo.getField("isKeyText").getStringValue());
+        } else if (isKeyType.isSource()) {
+            isKeyData.setSourceText(dataMediaInfo.getField("isKeyText").getStringValue());
+        }
+        dataMedia.setIsKeyData(isKeyData);
 
         try {
             dataMediaService.modify(dataMedia);

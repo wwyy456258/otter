@@ -1,7 +1,7 @@
 $control.setTemplate("home:navigation.vm")
-<script type='text/javascript' src='dwr/interface/Hello.js'></script>  
-<script type='text/javascript' src='dwr/engine.js'></script>  
-<script type='text/javascript' src='dwr/util.js'></script>  
+<script type='text/javascript' src='dwr/interface/Hello.js'></script>
+<script type='text/javascript' src='dwr/engine.js'></script>
+<script type='text/javascript' src='dwr/util.js'></script>
 <script type='text/javascript' src='js/dbCheck.js'></script>
 <script language="javascript">
 <!--
@@ -17,10 +17,10 @@ function changeKeyword(id, name) {
 </script>
 #macro (addDataMediaMessage $field)
     #if (!$field.valid) $field.message #end
-#end	
+#end
 
 <div class="main">
-  <div class="title"> 
+  <div class="title">
     <h2>添加数据表</h2>
   </div>
   <div class="crumbs"><a href="dataMediaList.htm">数据表配置</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addDataMedia.htm">添加数据表</a></div>
@@ -31,12 +31,12 @@ function changeKeyword(id, name) {
 	<input type="hidden" name="event_submit_do_add" value="1" />
  <div class="setting_box">
 	#set ($dataMediaGroup = $form.dataMediaInfo.defaultInstance)
-	
+
     <table cellpadding="0" cellspacing="0" class="setting_otter">
 		<tr>
             <span class="red">#addDataMediaMessage ($dataMediaGroup.formDataMediaError)</span>
         </tr>
-      <tr> 
+      <tr>
         <th width="300">schema name：</th>
         <td width="329">
 			<input id="namespace" name="$dataMediaGroup.namespace.key" value="$!dataMediaGroup.namespace.value" type="text" class="setting_input"/><span class="red">*</span>
@@ -44,7 +44,7 @@ function changeKeyword(id, name) {
 			<span class="red">#addDataMediaMessage ($dataMediaGroup.namespace)</span>
 		</td>
       </tr>
-	  <tr> 
+	  <tr>
         <th width="300">table name：</th>
         <td width="329">
 			<input id="name" name="$dataMediaGroup.name.key" value="$!dataMediaGroup.name.value" type="text" class="setting_input"/><span class="red">*</span>
@@ -52,7 +52,20 @@ function changeKeyword(id, name) {
 			<span class="red">#addDataMediaMessage ($dataMediaGroup.name)</span>
 		</td>
       </tr>
-	  <tr> 
+        <tr>
+            <th>业务主键类型:</th>
+            <td>
+                <select name="$dataMediaGroup.isKeyType.key" id="select">
+                    <option value="CLAZZ" selected="selected">CLAZZ</option>
+                    <option value="SOURCE">SOURCE</option>
+                </select><span class="red">*</span>
+            </td>
+        </tr>
+        <tr>
+            <th>业务主键类型文本:</th>
+            <td><textarea cols="90" rows="10" name="$dataMediaGroup.isKeyText.key">$!dataMediaGroup.isKeyText.value</textarea></td>
+        </tr>
+	  <tr>
         <th>数据源：</th>
         <td>
 			<input id="dataSourceName" name="$dataMediaGroup.sourceName.key" value="$!dataMediaGroup.sourceName.value" type="text" class="setting_input" readonly />
@@ -62,7 +75,7 @@ function changeKeyword(id, name) {
 			<span class="red">#addDataMediaMessage ($dataMediaGroup.sourceId)</span>
 		</td>
       </tr>
-	  <tr> 
+	  <tr>
         <th><input type='button' value='验证连接表' onclick='checkMap();' /><br><hr align="right" style="width:100px;">
             <input type='button' value='查询Schema&Table' onclick='checkNamespaceTables()' />
 		</th>
@@ -70,7 +83,7 @@ function changeKeyword(id, name) {
 			<span class="red" id="result"></span>
 		</td>
       </tr>
-	  <tr> 
+	  <tr>
         <th>table示例说明</th>
         <td>
 			<br/>
@@ -80,7 +93,7 @@ function changeKeyword(id, name) {
 		</td>
       </tr>
     </table>
-	 
+
  </div>
   <div class="btn"><a href="javascript:document.addDataMediaForm.submit();">保存</a></div>
   </form>

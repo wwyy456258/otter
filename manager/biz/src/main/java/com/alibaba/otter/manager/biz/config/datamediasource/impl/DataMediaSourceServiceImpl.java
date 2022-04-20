@@ -21,8 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.druid.util.StringUtils;
-import com.alibaba.otter.shared.common.model.config.data.ExtensionData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -225,10 +223,7 @@ public class DataMediaSourceServiceImpl implements DataMediaSourceService {
             } else if (dataMediaSourceDo.getType().isNapoli() || dataMediaSourceDo.getType().isMq()) {
                 dataMediaSource = JsonUtils.unmarshalFromString(dataMediaSourceDo.getProperties(), MqMediaSource.class);
             }
-            if(!StringUtils.isEmpty(dataMediaSourceDo.getExtensionData())){
-                ExtensionData extensionData = JsonUtils.unmarshalFromString(dataMediaSourceDo.getExtensionData(), ExtensionData.class);
-                dataMediaSource.setExtensionData(extensionData);
-            }
+
             dataMediaSource.setId(dataMediaSourceDo.getId());
             dataMediaSource.setGmtCreate(dataMediaSourceDo.getGmtCreate());
             dataMediaSource.setGmtModified(dataMediaSourceDo.getGmtModified());

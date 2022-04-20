@@ -27,7 +27,6 @@ import java.util.Map;
 import com.alibaba.otter.node.etl.extend.processor.IsKeyProcessor;
 import com.alibaba.otter.shared.common.model.config.data.*;
 import com.alibaba.otter.shared.common.utils.extension.ExtensionFactory;
-import com.alibaba.otter.shared.etl.extend.processor.EventProcessor;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ddlutils.model.Table;
 import org.slf4j.Logger;
@@ -48,7 +47,10 @@ import com.alibaba.otter.node.etl.select.exceptions.SelectException;
 import com.alibaba.otter.node.etl.transform.exception.TransformException;
 import com.alibaba.otter.shared.common.model.config.ConfigHelper;
 import com.alibaba.otter.shared.common.model.config.channel.ChannelParameter.SyncConsistency;
+import com.alibaba.otter.shared.common.model.config.data.DataMedia;
 import com.alibaba.otter.shared.common.model.config.data.DataMedia.ModeValue;
+import com.alibaba.otter.shared.common.model.config.data.DataMediaPair;
+import com.alibaba.otter.shared.common.model.config.data.DataMediaSource;
 import com.alibaba.otter.shared.common.model.config.data.db.DbMediaSource;
 import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
 import com.alibaba.otter.shared.common.model.config.pipeline.PipelineParameter;
@@ -692,8 +694,8 @@ public class MessageParser {
         ExtensionData extensionData = null;
         for (DataMediaPair pair : pipeline.getPairs()) {
             DataMedia dataMedia = pair.getSource();
-            if(tableName.equals(dataMedia.getNamespace()+"."+dataMedia.getName())){
-                extensionData = dataMedia.getSource().getExtensionData();
+            if(dataMedia.getIsKeyData() != null && dataMedia.getIsKeyData().getExtensionDataType()!= null){
+                extensionData = dataMedia.getIsKeyData();
                 break;
             }
         }

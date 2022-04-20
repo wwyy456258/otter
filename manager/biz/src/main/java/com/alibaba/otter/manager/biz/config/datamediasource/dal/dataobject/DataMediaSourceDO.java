@@ -31,7 +31,6 @@ public class DataMediaSourceDO implements Serializable {
     private String            name;
     private DataMediaType     type;
     private String            properties;
-    private String            extensionData;
     private Date              gmtCreate;
     private Date              gmtModified;
 
@@ -83,11 +82,4 @@ public class DataMediaSourceDO implements Serializable {
         this.properties = properties;
     }
 
-    public String getExtensionData() {
-        return extensionData;
-    }
-
-    public void setExtensionData(String extensionData) {
-        this.extensionData = extensionData;
-    }
 }

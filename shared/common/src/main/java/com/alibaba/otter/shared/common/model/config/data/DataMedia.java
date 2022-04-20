@@ -42,6 +42,7 @@ public class DataMedia<Source extends DataMediaSource> implements Serializable {
     private String              encode;                                  // 编码
     private Date                gmtCreate;
     private Date                gmtModified;
+    private ExtensionData       isKeyData;
     // 运行时计算出来的属性，避免每次通过ConfigHelper进行正则解析
     private transient ModeValue nameMode;
     private transient ModeValue namespaceMode;
@@ -160,6 +161,14 @@ public class DataMedia<Source extends DataMediaSource> implements Serializable {
 
     public void setEncode(String encode) {
         this.encode = encode;
+    }
+
+    public ExtensionData getIsKeyData() {
+        return isKeyData;
+    }
+
+    public void setIsKeyData(ExtensionData isKeyData) {
+        this.isKeyData = isKeyData;
     }
 
     public Mode getMode() {

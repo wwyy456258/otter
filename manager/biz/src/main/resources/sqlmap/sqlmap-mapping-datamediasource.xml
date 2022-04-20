@@ -11,13 +11,12 @@
 		<result property="name" column="NAME" />
 		<result property="type" column="TYPE" typeHandler=""/>
 		<result property="properties" column="PROPERTIES" />
-		<result property="extensionData" column="EXTENSION_DATA" />
 		<result property="gmtCreate" column="GMT_CREATE" />
 		<result property="gmtModified" column="GMT_MODIFIED" />
 	</resultMap>
 
 	<!-- all dataMediaSource columns -->
-	<sql id="allDataMediaSourceColumns">ID,NAME,TYPE,PROPERTIES,EXTENSION_DATA,GMT_CREATE,GMT_MODIFIED</sql>
+	<sql id="allDataMediaSourceColumns">ID,NAME,TYPE,PROPERTIES,GMT_CREATE,GMT_MODIFIED</sql>
 
 	<select id="findDataMediaSourceById" resultMap="dataMediaSourceResult"
 		parameterClass="long">

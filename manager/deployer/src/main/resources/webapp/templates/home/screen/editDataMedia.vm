@@ -54,7 +54,19 @@ function changeKeyword(id, name) {
 			<span class="red">#editDataMediaMessage ($dataMediaGroup.name)</span>
 		</td>
       </tr>
-	  
+		<tr>
+			<th>业务主键类型:</th>
+			<td>
+				<select name="$dataMediaGroup.isKeyType.key" id="select">
+					<option value="CLAZZ" #if ($dataMedia.isKeyData.ExtensionDataType.isClazz()) selected="selected" #end>CLAZZ</option>
+					<option value="SOURCE" #if ($dataMedia.isKeyData.ExtensionDataType.isSource()) selected="selected" #end>SOURCE</option>
+				</select><span class="red">*</span>
+			</td>
+		</tr>
+		<tr>
+			<th>业务主键类型文本:</th>
+			<td><textarea cols="90" rows="10" name="$dataMediaGroup.isKeyText.key">#if ($dataMedia.isKeyData.ExtensionDataType.isClazz())$!dataMedia.isKeyData.clazzPath#elseif($dataMedia.isKeyData.ExtensionDataType.isSource())$!dataMedia.isKeyData.sourceText#end</textarea><span class="red">*</span></td>
+		</tr>
 	  <tr> 
         <th>数据源：</th>
         <td>

@@ -293,6 +293,9 @@
 				</fm-validators:required-validator>
 			</field>
 			<field name="encode" displayName="数据编码" />
+			<field name="isKeyType" displayName="业务主键类型" />
+			<field name="isKeyText" displayName="业务主键类型文本" />
+			<field name="isKey" displayName="业务主键" />
 			<field name="sourceName" displayName="数据源名称" />
 			<field name="sourceId" displayName="数据源">
 				<fm-validators:required-validator>
