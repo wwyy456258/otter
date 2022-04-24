@@ -694,7 +694,8 @@ public class MessageParser {
         ExtensionData extensionData = null;
         for (DataMediaPair pair : pipeline.getPairs()) {
             DataMedia dataMedia = pair.getSource();
-            if(dataMedia.getIsKeyData() != null && dataMedia.getIsKeyData().getExtensionDataType()!= null){
+            String dataMediaTableName = dataMedia.getNamespace()+"."+dataMedia.getName();
+            if(tableName.equals(dataMediaTableName) && dataMedia.getIsKeyData() != null && dataMedia.getIsKeyData().getExtensionDataType()!= null){
                 extensionData = dataMedia.getIsKeyData();
                 break;
             }
